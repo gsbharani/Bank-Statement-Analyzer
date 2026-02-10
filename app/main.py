@@ -2,9 +2,9 @@ from fastapi import FastAPI, UploadFile, File, Depends
 import shutil
 import uuid
 
-from parser import parse_pdf
-from categorizer import categorize
-from insights import summary
+from app.parser import parse_pdf
+from app.categorizer import categorize
+from app.insights import summary
 
 app = FastAPI(title="Financial Insights API")
 
