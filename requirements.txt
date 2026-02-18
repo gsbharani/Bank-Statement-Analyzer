@@ -1,11 +1,5 @@
 fastapi
 uvicorn
-sqlalchemy
-psycopg2-binary
-python-dotenv
-passlib[bcrypt]
 python-multipart
-pdfplumber
 pandas
-sentence-transformers
-scikit-learn
+pdfplumber
