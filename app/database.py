@@ -1,13 +1,16 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-import os
-from dotenv import load_dotenv
+import sqlite3
 
-load_dotenv()
+conn = sqlite3.connect("transactions.db", check_same_thread=False)
+cursor = conn.cursor()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS transactions(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT,
+    description TEXT,
+    amount REAL,
+    type TEXT
+)
+""")
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(bind=engine)
-
-Base = declarative_base()
+conn.commit()
