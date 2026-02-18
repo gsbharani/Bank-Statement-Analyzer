@@ -1,25 +1,21 @@
-from fastapi import FastAPI, UploadFile, File, Depends
+from fastapi import FastAPI, UploadFile
 import shutil
-import uuid
 
-from app.parser import parse_pdf
-from app.categorizer import categorize
-from app.insights import summary
+from parser import parse_pdf
+from analyzer import summarize
 
-app = FastAPI(title="Financial Insights API")
+app = FastAPI()
 
-@app.post("/analyze")
-async def analyze(file: UploadFile = File(...)):
+@app.post("/upload")
+async def upload(file: UploadFile):
 
-    file_path = f"uploads/{uuid.uuid4()}.pdf"
+    path = file.filename
 
-    with open(file_path, "wb") as buffer:
+    with open(path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    df = parse_pdf(file_path)
+    df = parse_pdf(path)
 
-    df["Category"] = df["Description"].apply(categorize)
-
-    result = summary(df)
+    result = summarize(df)
 
     return result
