@@ -1,22 +1,20 @@
 import pdfplumber
 import pandas as pd
 
-def parse_pdf(path):
+def parse_pdf(file_path):
+    data = []
 
-    rows = []
-
-    with pdfplumber.open(path) as pdf:
+    with pdfplumber.open(file_path) as pdf:
         for page in pdf.pages:
-            tables = page.extract_tables()
+            table = page.extract_table()
 
-            for table in tables:
-                for r in table[1:]:
-                    rows.append(r)
+            if table:
+                for row in table[1:]:
+                    data.append(row)
 
-    df = pd.DataFrame(rows)
-    df.columns = ["Date","Description","Debit","Credit","Balance"]
+    df = pd.DataFrame(data, columns=["date","description","debit","credit","balance"])
 
-    df["Debit"] = pd.to_numeric(df["Debit"], errors="coerce").fillna(0)
-    df["Credit"] = pd.to_numeric(df["Credit"], errors="coerce").fillna(0)
+    df["amount"] = df["debit"].fillna(df["credit"])
+    df["type"] = df["debit"].apply(lambda x: "debit" if x else "credit")
 
-    return df
+    return df[["date","description","amount","type"]]
